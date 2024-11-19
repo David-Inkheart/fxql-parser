@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fxql-parser-app
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/parser
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    container_name: fxql-parser-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: parser
+    ports:
+      - '5432:5432'
