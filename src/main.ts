@@ -6,11 +6,17 @@ import { PrismaService } from './prisma/prisma.service';
 async function bootstrap() {
   const app = await NestFactory.create(FxqlModule);
 
-  const prismaService = app.get(PrismaService);
-  prismaService.$queryRaw`SELECT 1`
-    .then(() => console.log('Database connected successfully!'))
-    .catch((err) => console.error('Database connection failed:', err));
+  app.enableCors();
 
-  await app.listen(process.env.PORT ?? 3000);
+  const PORT = process.env.PORT || 3000;
+
+  await app.listen(PORT, () => {
+    console.log(`Application running on port ${PORT}`);
+
+    const prismaService = app.get(PrismaService);
+    prismaService.$queryRaw`SELECT 1`
+      .then(() => console.log('Database connected successfully!'))
+      .catch((err) => console.error('Database connection failed:', err));
+  });
 }
 bootstrap();
