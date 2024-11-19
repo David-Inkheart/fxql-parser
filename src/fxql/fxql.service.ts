@@ -19,13 +19,15 @@ export class FxqlService {
       throw new BadRequestException('FXQL input cannot be empty');
     }
 
-    const entries = fxql.split('\n\n');
+    // const entries = fxql.split('\n\n');
+    const entries = fxql.split(/\\n\\n/);
     const results = [];
 
     entries.forEach((entry, index) => {
-      const match = entry.match(
-        /([A-Z]{3})-([A-Z]{3}) \{\s*BUY (\d+(\.\d{1,5})?)\s*SELL (\d+(\.\d{1,5})?)\s*CAP (\d+)\s*\}/,
-      );
+      const regex =
+        /([A-Z]{3})-([A-Z]{3}) \{\s*(?:\\n\s*)?BUY (\d+(\.\d{1,5})?)(?:\\n\s*)?SELL (\d+(\.\d{1,5})?)(?:\\n\s*)?CAP (\d+)(?:\\n\s*)?\}/;
+
+      const match = entry.match(regex);
 
       if (!match) {
         throw new BadRequestException(

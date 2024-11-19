@@ -1,7 +1,14 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { FxqlService } from './fxql.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { FxqlRequestDto } from './dto/fxql-request.dto';
+import { ResponseUtil } from 'src/utils/response.utils';
 
 @Controller('fxql-statements')
 export class FxqlController {
@@ -14,35 +21,48 @@ export class FxqlController {
   async handleFxql(@Body() body: FxqlRequestDto) {
     const { FXQL } = body;
 
-    // Parse and validate FXQL string
-    const parsedEntries = this.fxqlService.parseFxql(FXQL);
+    try {
+      const parsedEntries = this.fxqlService.parseFxql(FXQL);
 
-    // Save entries to the database
-    const results = [];
-    for (const entry of parsedEntries) {
-      let rate = await this.prisma.exchangeRate.findFirst({
-        where: {
-          sourceCurrency: entry.sourceCurrency,
-          destinationCurrency: entry.destinationCurrency,
-        },
-      });
-
-      if (rate) {
-        rate = await this.prisma.exchangeRate.update({
-          where: { id: rate.id },
-          data: entry,
+      const results = [];
+      for (const entry of parsedEntries) {
+        let rate = await this.prisma.exchangeRate.findFirst({
+          where: {
+            sourceCurrency: entry.sourceCurrency,
+            destinationCurrency: entry.destinationCurrency,
+          },
         });
-      } else {
-        rate = await this.prisma.exchangeRate.create({ data: entry });
+
+        if (rate) {
+          rate = await this.prisma.exchangeRate.update({
+            where: { id: rate.id },
+            data: entry,
+          });
+        } else {
+          rate = await this.prisma.exchangeRate.create({ data: entry });
+        }
+
+        results.push({
+          EntryId: rate.id,
+          SourceCurrency: rate.sourceCurrency,
+          DestinationCurrency: rate.destinationCurrency,
+          SellPrice: rate.sellPrice,
+          BuyPrice: rate.buyPrice,
+          CapAmount: rate.capAmount,
+        });
       }
 
-      results.push(rate);
+      return ResponseUtil.success(
+        'Rates Parsed Successfully.',
+        'FXQL-200',
+        results,
+      );
+    } catch (error) {
+      const statusCode = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+      throw new HttpException(
+        ResponseUtil.error(error.message, statusCode),
+        statusCode,
+      );
     }
-
-    return {
-      message: 'FXQL Statement Parsed Successfully.',
-      code: 'FXQL-200',
-      data: results,
-    };
   }
 }

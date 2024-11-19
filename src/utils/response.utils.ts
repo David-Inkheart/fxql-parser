@@ -8,10 +8,11 @@ export class ResponseUtil {
     };
   }
 
-  static error(message: string, code: string) {
+  static error(message: string, statusCode: number) {
+    const errorCode = `FXQL-${statusCode}`;
     return {
       message,
-      code,
+      code: errorCode,
     };
   }
 }
