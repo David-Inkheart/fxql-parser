@@ -46,17 +46,18 @@ export class FxqlController {
           EntryId: rate.id,
           SourceCurrency: rate.sourceCurrency,
           DestinationCurrency: rate.destinationCurrency,
-          SellPrice: rate.sellPrice,
-          BuyPrice: rate.buyPrice,
+          SellPrice: rate.sellPrice.toNumber(),
+          BuyPrice: rate.buyPrice.toNumber(),
           CapAmount: rate.capAmount,
         });
       }
 
-      return ResponseUtil.success(
-        'Rates Parsed Successfully.',
-        'FXQL-200',
-        results,
-      );
+      const message =
+        results.length > 1
+          ? 'FXQL Statement Parsed Successfully.'
+          : 'Rates Parsed Successfully.';
+
+      return ResponseUtil.success(message, 'FXQL-200', results);
     } catch (error) {
       const statusCode = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
       throw new HttpException(
