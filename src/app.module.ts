@@ -5,7 +5,7 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
 import { FxqlModule } from './fxql/fxql.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { CustomThrottlerGuard } from './throttler/custom-throttler.guard';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from './redis/redis.module';
 import * as Joi from 'joi';
 import Redis from 'ioredis';
@@ -36,15 +36,15 @@ import Redis from 'ioredis';
 
     // configure Rate Limiting
     ThrottlerModule.forRootAsync({
-      useFactory: (redis: Redis) => ({
-        imports: [RedisModule],
-        inject: ['REDIS_CLIENT'],
+      imports: [ConfigModule, RedisModule],
+      inject: [ConfigService, 'REDIS_CLIENT'],
+      useFactory: (configService: ConfigService, redis: Redis) => ({
         throttlers: [
           {
-            ttl: seconds(parseInt(process.env.THROTTLER_TTL, 10)),
-            limit: parseInt(process.env.THROTTLER_LIMIT, 10),
+            ttl: seconds(configService.get<number>('THROTTLER_TTL')),
+            limit: configService.get<number>('THROTTLER_LIMIT'),
             blockDuration: seconds(
-              parseInt(process.env.THROTTLER_BLOCK_DURATION, 10),
+              configService.get<number>('THROTTLER_BLOCK_DURATION'),
             ),
           },
         ],

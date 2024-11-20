@@ -17,7 +17,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "heroku-prebuild": "export NPM_CONFIG_PRODUCTION=false export NODE_ENV=development && npm install --only=dev && npm install -g @nestjs/cli",
-    "heroku-postbuild": "npm install && npm install @types/node && npm run build && npx prisma generate && npx prisma migrate deploy; export NPM_CONFIG_PRODUCTION=true NODE_ENV=production",
+    "heroku-postbuild": "npm install && npm run build && npx prisma generate && npx prisma migrate deploy; export NPM_CONFIG_PRODUCTION=true NODE_ENV=production",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
