@@ -100,7 +100,8 @@ export class FxqlService {
       );
     }
 
-    const entries = [];
+    // const entries = [];
+    const uniqueEntries = new Map<string, any>();
 
     const reassembledPayload = segments.join('\\n\\n');
 
@@ -130,6 +131,22 @@ export class FxqlService {
           );
         }
       }
+
+      try {
+        const parsedEntry = this.parseSingleEntry(entry, index);
+
+        // Using the source-destination pair as the unique key
+        const key = `${parsedEntry.sourceCurrency}-${parsedEntry.destinationCurrency}`;
+
+        uniqueEntries.set(key, parsedEntry);
+      } catch (error) {
+        if (error instanceof BadRequestException) {
+          throw new BadRequestException(
+            `Invalid FXQL syntax in entry #${index + 1}: ${error.message}`,
+          );
+        }
+        throw error;
+      }
     });
 
     if (reassembledPayload !== fxql.trim() || segments.length === 0) {
@@ -138,22 +155,6 @@ export class FxqlService {
       );
     }
 
-    for (let i = 0; i < segments.length; i++) {
-      const segment = segments[i];
-
-      try {
-        const parsedEntry = this.parseSingleEntry(segment, entries.length);
-        entries.push(parsedEntry);
-      } catch (error) {
-        if (error instanceof BadRequestException) {
-          throw new BadRequestException(
-            `Invalid FXQL syntax in entry #${entries.length + 1}: ${error.message}`,
-          );
-        }
-        throw error;
-      }
-    }
-
-    return entries;
+    return Array.from(uniqueEntries.values());
   }
 }
