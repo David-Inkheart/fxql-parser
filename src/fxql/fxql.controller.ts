@@ -9,7 +9,14 @@ import { FxqlService } from './fxql.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { FxqlRequestDto } from './dto/fxql-request.dto';
 import { ResponseUtil } from 'src/utils/response.utils';
+import {
+  FxqlApiTags,
+  FxqlApiBody,
+  FxqlApiResponseSuccess,
+  FxqlApiResponseError,
+} from './fxql.swagger';
 
+@FxqlApiTags
 @Controller('fxql-statements')
 export class FxqlController {
   constructor(
@@ -18,6 +25,9 @@ export class FxqlController {
   ) {}
 
   @Post()
+  @FxqlApiBody
+  @FxqlApiResponseSuccess
+  @FxqlApiResponseError
   async handleFxql(@Body() body: FxqlRequestDto) {
     const { FXQL } = body;
 
