@@ -25,6 +25,7 @@ The FXQL Parser API is a robust system built with NestJS for parsing and validat
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    cd fxql-parser
@@ -119,11 +120,16 @@ Parses and validates FXQL statements, stores valid entries, and returns structur
 }
 ```
 
+// link to swagger documentation
+**Swagger Documentation:**
+The API documentation can be accessed via Swagger UI at the [/api-docs](https://fxql-parser-app-2dd73b37f0cc.herokuapp.com) endpoint.
+
 ---
 
 ## Assumptions and Design Decisions
 
 1. **Architecture**:
+
    - Uses a modular architecture with NestJS for scalability and maintainability.
    - Separates concerns with services, controllers, and modules.
 
@@ -150,7 +156,7 @@ Parses and validates FXQL statements, stores valid entries, and returns structur
    - Entry IDs are uuids for uniqueness and security, as well as preventing enumeration attacks for possible future scaling.
 
 6. **Rate Limiting**:
-   - Blocks requests for a specified duration after exceeding the limit, to prevent abuse. 
+   - Blocks requests for a specified duration after exceeding the limit, to prevent abuse.
 
 ---
 
