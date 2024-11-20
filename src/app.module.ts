@@ -6,17 +6,31 @@ import Redis from 'ioredis';
 import { FxqlModule } from './fxql/fxql.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { CustomThrottlerGuard } from './throttler/custom-throttler.gaurd';
+import { ConfigModule } from '@nestjs/config';
+import * as Joi from '@hapi/joi';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: Joi.object({
+        PORT: Joi.number().required(),
+        DATABASE_URL: Joi.string().required(),
+        THROTTLER_TTL: Joi.number().required(),
+        THROTTLER_LIMIT: Joi.number().required(),
+        THROTTLER_BLOCK_DURATION: Joi.number().required(),
+      }),
+    }),
     FxqlModule,
     PrismaModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
-          ttl: seconds(5),
-          limit: 5,
-          blockDuration: seconds(5),
+          ttl: seconds(parseInt(process.env.THROTTLER_TTL, 10)),
+          limit: parseInt(process.env.THROTTLER_LIMIT, 10),
+          blockDuration: seconds(
+            parseInt(process.env.THROTTLER_BLOCK_DURATION, 10),
+          ),
         },
       ],
       storage: new ThrottlerStorageRedisService(new Redis()),
