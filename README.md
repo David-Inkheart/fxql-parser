@@ -1,6 +1,5 @@
 ---
 
-````markdown
 # FXQL Parser API
 
 The FXQL Parser API is a robust system built with NestJS for parsing and validating Foreign Exchange Query Language (FXQL) statements. It validates the syntax, stores valid entries in a PostgreSQL database using Prisma ORM, and provides appropriate responses for both valid and invalid FXQL statements.
@@ -30,8 +29,6 @@ The FXQL Parser API is a robust system built with NestJS for parsing and validat
    git clone <repository-url>
    cd fxql-parser
    ```
-
-````
 
 2. Install dependencies:
 
@@ -78,7 +75,7 @@ The FXQL Parser API is a robust system built with NestJS for parsing and validat
 ### Base URL
 
 - Local: `http://localhost:3000`
-- Production: `<your-production-url>`
+- Production: `https://fxql-parser-app-2dd73b37f0cc.herokuapp.com`
 
 ### Endpoints
 
@@ -102,7 +99,7 @@ Parses and validates FXQL statements, stores valid entries, and returns structur
   "code": "FXQL-200",
   "data": [
     {
-      "EntryId": 1,
+      "EntryId": a427b310-5801-4cba-bbf4-fe59e8c5add0,
       "SourceCurrency": "USD",
       "DestinationCurrency": "GBP",
       "SellPrice": 200,
@@ -126,29 +123,34 @@ Parses and validates FXQL statements, stores valid entries, and returns structur
 
 ## Assumptions and Design Decisions
 
-1. **Syntax Enforcement**:
+1. **Architecture**:
+   - Uses a modular architecture with NestJS for scalability and maintainability.
+   - Separates concerns with services, controllers, and modules.
+
+2. **Syntax Enforcement**:
 
    - FXQL statements must follow the strict syntax `CURR1-CURR2 { BUY X SELL Y CAP Z }`.
    - Multiple statements must be separated by a double newline (`\\n\\n`).
 
-2. **Validation Rules**:
+3. **Validation Rules**:
 
    - **Currencies (`CURR1`, `CURR2`)**: Exactly 3 uppercase letters.
    - **BUY/SELL**: Numeric with up to 5 decimal places.
    - **CAP**: Whole number (no decimals, non-negative).
 
-3. **Error Handling**:
+4. **Error Handling**:
 
    - Provides detailed error messages specifying the entry and field causing the issue.
    - Returns consistent error shapes for easy client-side handling.
 
-4. **Database Design**:
+5. **Database Design**:
 
    - Uses Prisma ORM with a PostgreSQL backend.
    - Schema includes `Decimal` fields for `BUY` and `SELL` prices, ensuring high precision.
+   - Entry IDs are uuids for uniqueness and security, as well as preventing enumeration attacks for possible future scaling.
 
-5. **Rate Limiting**:
-   - Limits requests per time using Redis.
+6. **Rate Limiting**:
+   - Blocks requests for a specified duration after exceeding the limit, to prevent abuse. 
 
 ---
 
@@ -172,56 +174,21 @@ Parses and validates FXQL statements, stores valid entries, and returns structur
      npm run test
      ```
 
----
-
-## Environmental Variables
-
-| Variable          | Description                              | Example                                        |
-| ----------------- | ---------------------------------------- | ---------------------------------------------- |
-| `DATABASE_URL`    | Connection string for PostgreSQL         | `postgresql://user:pass@localhost:5432/dbname` |
-| `REDIS_URL`       | Connection string for Redis              | `redis://127.0.0.1:6379`                       |
-| `PORT`            | Port to run the application on           | `3000`                                         |
-| `THROTTLER_TTL`   | Time-to-live for rate limiting (seconds) | `60`                                           |
-| `THROTTLER_LIMIT` | Maximum requests per TTL window          | `10`                                           |
-
----
-
 ## Future Enhancements
 
 1. **Authentication**:
 
    - Add user authentication with JWT for secured API access.
 
-2. **Swagger Documentation**:
-
-   - Generate OpenAPI documentation for better API visualization.
-
-3. **Error Logging**:
+2. **Error Logging**:
 
    - Implement centralized error logging with a service like Sentry.
 
-4. **Pagination**:
+3. **Pagination**:
 
    - Implement pagination for querying stored FXQL entries.
 
-5. **Scaling**:
+4. **Scaling**:
    - Configure for horizontal scaling with Redis-backed rate limiting.
 
 ---
-
-## Contribution
-
-1. Fork the repository.
-2. Create a feature branch:
-   ```bash
-   git checkout -b feature-name
-   ```
-3. Commit changes and push:
-   ```bash
-   git commit -m "Add feature"
-   git push origin feature-name
-   ```
-4. Open a Pull Request.
-
----
-````
