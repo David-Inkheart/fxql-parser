@@ -1,4 +1,3 @@
-// src/fxql/dto/fxql-request.dto.ts
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class FxqlRequestDto {

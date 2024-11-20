@@ -19,7 +19,6 @@ export class FxqlService {
       throw new BadRequestException('FXQL input cannot be empty');
     }
 
-    // const entries = fxql.split('\n\n');
     const entries = fxql.split(/\\n\\n/);
     const results = [];
 
