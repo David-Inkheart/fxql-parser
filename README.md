@@ -122,7 +122,7 @@ Parses and validates FXQL statements, stores valid entries, and returns structur
 
 // link to swagger documentation
 **Swagger Documentation:**
-The API documentation can be accessed via Swagger UI at the [/api-docs](https://fxql-parser-app-2dd73b37f0cc.herokuapp.com) endpoint.
+The API documentation can be accessed via Swagger UI at the [/api-docs](https://fxql-parser-app-2dd73b37f0cc.herokuapp.com/api=docs) endpoint.
 
 ---
 
