@@ -100,7 +100,7 @@ Parses and validates FXQL statements, stores valid entries, and returns structur
   "code": "FXQL-200",
   "data": [
     {
-      "EntryId": a427b310-5801-4cba-bbf4-fe59e8c5add0,
+      "EntryId": "a427b310-5801-4cba-bbf4-fe59e8c5add0",
       "SourceCurrency": "USD",
       "DestinationCurrency": "GBP",
       "SellPrice": 200,

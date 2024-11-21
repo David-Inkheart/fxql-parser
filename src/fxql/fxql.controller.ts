@@ -8,7 +8,7 @@ import {
 import { FxqlService } from './fxql.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { FxqlRequestDto } from './dto/fxql-request.dto';
-import { ResponseUtil } from 'src/utils/response.utils';
+import { ResponseUtil } from '../utils/response.utils';
 import {
   FxqlApiTags,
   FxqlApiBody,

@@ -12,7 +12,7 @@ export class CustomThrottlerGuard extends ThrottlerGuard {
       const retryAfter = throttlerLimitDetail.timeToBlockExpire || 0;
       throw new HttpException(
         {
-          message: `You are being rate limited. Try again in ${retryAfter} seconds.`,
+          message: `Too many requests. Please try again in ${retryAfter} seconds.`,
           code: 'FXQL-429',
         },
         HttpStatus.TOO_MANY_REQUESTS,

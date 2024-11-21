@@ -105,6 +105,12 @@ export class FxqlService {
 
     const reassembledPayload = segments.join('\\n\\n');
 
+    if (reassembledPayload !== fxql.trim()) {
+      throw new BadRequestException(
+        `Invalid FXQL syntax statement. Must follow the format 'CURR1-CURR2 {\\nBUY X\\nSELL Y\\nCAP Z\\n}' and multiple entries must be separated by double newlines '\\n\\n'.`,
+      );
+    }
+
     segments.forEach((entry, index) => {
       const regex =
         /([A-Z]{3})-([A-Z]{3}) \{\s*(?:\\n\s*)?BUY (\d+(\.\d{1,5})?)(?:\\n\s*)?SELL (\d+(\.\d{1,5})?)(?:\\n\s*)?CAP (\d+)(?:\\n\s*)?\}/;
@@ -148,12 +154,6 @@ export class FxqlService {
         throw error;
       }
     });
-
-    if (reassembledPayload !== fxql.trim() || segments.length === 0) {
-      throw new BadRequestException(
-        `Invalid FXQL syntax statement. Must follow the format 'CURR1-CURR2 {\\nBUY X\\nSELL Y\\nCAP Z\\n}' and multiple entries must be separated by double newlines '\\n\\n'.`,
-      );
-    }
 
     return Array.from(uniqueEntries.values());
   }
